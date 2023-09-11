@@ -9,3 +9,13 @@ type CreateProductInput struct {
 type UpdateProductInput struct {
 	CreateProductInput
 }
+
+type CreteUserInput struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type UpdateUserInput struct {
+	CreteUserInput
+}

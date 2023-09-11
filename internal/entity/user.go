@@ -26,6 +26,22 @@ func (u *User) CheckPassword(password string) bool {
 	return err == nil
 }
 
+func (u *User) SetName(name string) *User {
+	if name != "" {
+		u.Name = name
+	}
+
+	return u
+}
+
+func (u *User) SetEmail(email string) *User {
+	if email != "" {
+		u.Email = email
+	}
+
+	return u
+}
+
 func NewUser(name, email, password string) (*User, error) {
 	user := &User{
 		ID:    entity.NewID(),

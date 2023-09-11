@@ -1,0 +1,32 @@
+POST http://localhost:8000/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "User 2",
+    "email": "user2@gmail.com",
+    "password": "1234561wwq"
+}
+
+###
+
+GET http://localhost:8000/users HTTP/1.1
+Content-Type: application/json
+
+###
+GET http://localhost:8000/users/14ead369-7fa6-4f25-97ba-a0ff9c90ee7d HTTP/1.1
+Content-Type: application/json
+
+###
+
+PATCH http://localhost:8000/users/14ead369-7fa6-4f25-97ba-a0ff9c90ee7d HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "User",
+    "email": "email_updated@gmail.com",
+    "password": "q1234561"
+}
+
+###
+DELETE http://localhost:8000/users/14ead369-7fa6-4f25-97ba-a0ff9c90ee7d HTTP/1.1
+Content-Type: application/json
