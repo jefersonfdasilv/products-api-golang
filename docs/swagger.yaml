@@ -1,0 +1,354 @@
+basePath: /
+definitions:
+  dto.CreateProductInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.CreateProductOutput:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.CreateUserOutput:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.CreteUserInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GetJWTOutput:
+    properties:
+      access_token:
+        type: string
+    type: object
+  dto.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.UpdateProductInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.UpdateProductOutput:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  entity.Product:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API de Produtos do curso de Go da FullCycle
+  termsOfService: http://localhost:8000/terms
+  title: API de Produtos
+  version: "1.0"
+paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Busca todos os produtos
+      parameters:
+      - default: "1"
+        description: Número da página
+        in: query
+        name: page
+        required: true
+        type: string
+      - default: "10"
+        description: Número de itens por página
+        in: query
+        name: limit
+        required: true
+        type: string
+      - default: asc
+        description: Ordenação
+        in: query
+        name: sort
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produtos encontrados com sucesso
+          schema:
+            items:
+              $ref: '#/definitions/entity.Product'
+            type: array
+        "404":
+          description: Produtos não encontrados
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Busca todos os produtos
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo produto
+      parameters:
+      - description: Dados do produto
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Produto criado com sucesso
+          schema:
+            $ref: '#/definitions/dto.CreateProductOutput'
+        "400":
+          description: Dados inválidos
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Cria um novo produto
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deleta um produto
+      parameters:
+      - description: ID do produto
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Produto deletado com sucesso
+        "400":
+          description: Dados inválidos
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Produto não encontrado
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Deleta um produto
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Busca um produto
+      parameters:
+      - description: ID do produto
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produto encontrado com sucesso
+          schema:
+            $ref: '#/definitions/entity.Product'
+        "404":
+          description: Produto não encontrado
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Busca um produto
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um produto
+      parameters:
+      - description: ID do produto
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dados do produto
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductInput'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Produto atualizado com sucesso
+          schema:
+            $ref: '#/definitions/dto.UpdateProductOutput'
+        "400":
+          description: Dados inválidos
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Produto não encontrado
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Atualiza um produto
+      tags:
+      - products
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Cria um usuário
+      parameters:
+      - description: Dados do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreteUserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuário criado com sucesso
+          schema:
+            $ref: '#/definitions/dto.CreateUserOutput'
+        "400":
+          description: Dados inválidos
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Cria um usuário
+      tags:
+      - users
+  /users/auth/generate_token:
+    post:
+      consumes:
+      - application/json
+      description: Gera um token JWT
+      parameters:
+      - description: Credenciais dos usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário autenticado com sucesso
+          schema:
+            $ref: '#/definitions/dto.GetJWTOutput'
+        "400":
+          description: Dados inválidos
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "401":
+          description: Credenciais inválidas
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Gera um token JWT
+      tags:
+      - users
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

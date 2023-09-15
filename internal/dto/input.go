@@ -19,3 +19,8 @@ type CreteUserInput struct {
 type UpdateUserInput struct {
 	CreteUserInput
 }
+
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

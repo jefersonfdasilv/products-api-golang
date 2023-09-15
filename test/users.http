@@ -1,10 +1,10 @@
 POST http://localhost:8000/users HTTP/1.1
-Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIyMUBnbWFpbC5jb20iLCJleHAiOjE2OTQ0ODE3OTUsIm5hbWUiOiJVc2VyIDIxIn0.GufsHy0VvRWJG_fU9gZGg_-OINfUwDVv65ARSzAZZ64
 
 {
-    "name": "User 2",
-    "email": "user2@gmail.com",
-    "password": "1234561wwq"
+    "name": "User 21w",
+    "email": "user2w1@gmail.com",
+    "password": "12345"
 }
 
 ###
@@ -13,20 +13,30 @@ GET http://localhost:8000/users HTTP/1.1
 Content-Type: application/json
 
 ###
-GET http://localhost:8000/users/14ead369-7fa6-4f25-97ba-a0ff9c90ee7d HTTP/1.1
+GET http://localhost:8000/users/667e1a1b-f20d-48d5-b679-313be1d47b10 HTTP/1.1
 Content-Type: application/json
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIyMUBnbWFpbC5jb20iLCJleHAiOjE2OTQ0ODE3OTUsIm5hbWUiOiJVc2VyIDIxIn0.GufsHy0VvRWJG_fU9gZGg_-OINfUwDVv65ARSzAZZ64
 ###
 
-PATCH http://localhost:8000/users/14ead369-7fa6-4f25-97ba-a0ff9c90ee7d HTTP/1.1
+PATCH http://localhost:8000/users/667e1a1b-f20d-48d5-b679-313be1d47b10 HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "User",
-    "email": "email_updated@gmail.com",
-    "password": "q1234561"
+  "name": "User 21",
+  "email": "user21@gmail.com",
+  "password": "12345"
 }
 
 ###
-DELETE http://localhost:8000/users/14ead369-7fa6-4f25-97ba-a0ff9c90ee7d HTTP/1.1
+DELETE http://localhost:8000/users/ff35259c-a3c6-4959-a0b4-9f5bde2463db HTTP/1.1
 Content-Type: application/json
+
+###
+
+POST http://localhost:8000/auth/generate_token HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "user21@gmail.com",
+  "password": "12345"
+}

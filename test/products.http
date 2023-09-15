@@ -1,15 +1,17 @@
 POST http://localhost:8000/products HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIyMUBnbWFpbC5jb20iLCJleHAiOjE2OTQ0ODIwNDMsIm5hbWUiOiJVc2VyIDIxIn0.9SCoCktwDbhhEcqzppVmGJIk6XlL031NFLoKwnUbCB0
 Content-Type: application/json
 
 {
-    "name": "Product 1",
-    "price": 1000,
+    "name": "Product 3",
+    "price": 2300,
     "description": "Product 1 description"
 }
 
 ###
 
 GET http://localhost:8000/products HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIyMUBnbWFpbC5jb20iLCJleHAiOjE2OTQ0ODIwNDMsIm5hbWUiOiJVc2VyIDIxIn0.9SCoCktwDbhhEcqzppVmGJIk6XlL031NFLoKwnUbCB0
 Content-Type: application/json
 
 ###

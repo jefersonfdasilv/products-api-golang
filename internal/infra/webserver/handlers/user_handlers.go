@@ -7,11 +7,15 @@ import (
 	entitypkg "apis/pkg/entity"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth"
 	"net/http"
+	"time"
 )
 
 type UserHandler struct {
-	UserDB database.UserInterface
+	UserDB       database.UserInterface
+	Jwt          *jwtauth.JWTAuth
+	JwtExpiresIn int
 }
 
 func NewUserHandler(db database.UserInterface) *UserHandler {
@@ -20,17 +24,93 @@ func NewUserHandler(db database.UserInterface) *UserHandler {
 	}
 }
 
-func (uh *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (uh *UserHandler) GetAuth(r *http.Request) (*jwtauth.JWTAuth, int) {
+	jwt := r.Context().Value("jwtAuth").(*jwtauth.JWTAuth)
+	jwtExpiresIn := r.Context().Value("jwtExpiresIn").(int)
+	return jwt, jwtExpiresIn
+}
+
+// GetJwt godoc
+// @Summary Gera um token JWT
+// @Description Gera um token JWT
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body dto.LoginInput true "Credenciais dos usuário"
+// @Success 200 {object} dto.GetJWTOutput "Usuário autenticado com sucesso"
+// @Failure 400 {object} Error "Dados inválidos"
+// @Failure 401 {object} Error "Credenciais inválidas"
+// @Failure 500 {object} Error "Erro interno"
+// @Router /users/auth/generate_token [post]
+func (uh *UserHandler) GetJwt(w http.ResponseWriter, r *http.Request) {
+
+	jwt, jwtExpiresIn := uh.GetAuth(r)
+
+	input := dto.LoginInput{}
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
+		return
+	}
+
+	user, err := uh.UserDB.FindByEmail(input.Email)
+
+	if err != nil {
+		http.Error(w, "invalid credentials ", http.StatusUnauthorized)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
+		return
+	}
+
+	if !user.CheckPassword(input.Password) {
+		http.Error(w, "invalid credentials", http.StatusUnauthorized)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
+		return
+	}
+
+	_, tokenString, _ := jwt.Encode(map[string]interface{}{
+		"sub":   user.ID,
+		"name":  user.Name,
+		"email": user.Email,
+		"exp":   time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix(),
+	})
+
+	accessToken := dto.GetJWTOutput{AccessToken: tokenString}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(accessToken)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
+	}
+}
+
+// Create user godoc
+// @Summary Cria um usuário
+// @Description Cria um usuário
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body dto.CreteUserInput true "Dados do usuário"
+// @Success 201 {object} dto.CreateUserOutput "Usuário criado com sucesso"
+// @Failure 400 {object} Error "Dados inválidos"
+// @Failure 500 {object} Error "Erro interno"
+// @Router /users [post]
+func (uh *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	input := dto.CreteUserInput{}
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	user, err := entity.NewUser(input.Name, input.Email, input.Password)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 
@@ -38,9 +118,15 @@ func (uh *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(w).Encode(dto.CreateUserOutput{
+		ID:    user.ID.String(),
+		Name:  user.Name,
+		Email: user.Email,
+	})
 }
 
 func (uh *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
